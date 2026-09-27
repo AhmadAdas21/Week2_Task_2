@@ -1,6 +1,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
+using Week2_Task_2;
 using Week2_Task_2.Data;
+using Week2_Task_2.services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<iservices, services>();
 
 builder.Services.AddDbContext<data_base>(options =>options.UseSqlServer( builder.Configuration.GetConnectionString("DefaultConnection")));
 var app = builder.Build();

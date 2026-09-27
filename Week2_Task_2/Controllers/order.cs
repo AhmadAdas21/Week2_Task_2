@@ -9,6 +9,8 @@ using Week2_Task_2.services;
 
 namespace Week2_Task_2.Controllers
 {
+    [ApiController]
+    [Route("api/orders")]
     public class order : ControllerBase
     {
         private readonly data_base dp;
@@ -27,10 +29,16 @@ namespace Week2_Task_2.Controllers
             var x = await dp.order.ToListAsync();
             return Ok(x); 
         }
-        [HttpGet("{id")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<List<order>>>get_by_id(int id)
         {
-            var x=await dp.order.FirstAsync(x=>x.id==id);
+            var x = await dp.order.FirstOrDefaultAsync(x => x.id == id);
+
+            if (x == null)
+            {
+                return NotFound();
+            }
+
             return Ok(x);
         }
         [HttpPost]

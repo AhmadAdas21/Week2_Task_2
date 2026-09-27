@@ -9,62 +9,67 @@ using Week2_Task_2.services;
 
 namespace Week2_Task_2.Controllers
 {
-    [ApiController ]
+    [ApiController]
     [Route("Api/customer")]
 
-    
-    public class customer:ControllerBase
+
+    public class customer : ControllerBase
     {
         private readonly data_base db;
         private readonly iservices _service;
-        public customer(data_base data)
+        public customer(data_base data, iservices service)
         {
-            db = data;
-        }
 
-        public customer(iservices service)
-        {
+            db = data;
             _service = service;
         }
-        [HttpGet]   
-        public async Task< ActionResult<List<data_base>>> GetAll()
+
+         [HttpGet]   
+        public async Task< ActionResult<List<models.customer>>> GetAll()
         {
            var x= await db.Customers.ToListAsync();
             return Ok(x);   
 
         }
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<List<data_base>>> Get_by_id(int id)
         {
-            var x = db.Customers.FirstOrDefaultAsync(x => x.id == id);
+
+            var x = await db.Customers.FirstOrDefaultAsync(x => x.id == id);
+            if (x == null)
+            {
+                return NotFound();
+            }
             return Ok(x);
         }
         [HttpPost]
-        public async ActionResult<response_customer >Create([FromBody]create_customer dto)
+       public async Task<ActionResult<response_customer>> Create(create_customer dto)
         {
-            try
+            var customer = new models.customer
             {
-              await  _service.add_customer(dto);
-            }
-            catch (Exception ex) {
-            {
-                    new 
+                name = dto.name,
+                email = dto.email
+            };
 
-            }
+            await _service.CreateAsync(customer);
         }
         [HttpPut]
-        public async ActionResult<response_customer>update(update_customer dto,int id)
-            {
-                if(db.Customers.Any(x => x.id == id))
-                {
-                    return;
-                }
-                else
-                {
-                    throw new Exception("the user not found");
-                }
+        public async ActionResult<response_customer> update(update_customer dto, int id)
+        {
+            var x = await db.Customers.FirstOrDefaultAsync(x => x.id == id);
+            if (x == null) {
+
+                return NotFound();
 
             }
+            x.name = dto.name;
+            x.email = dto.email;
+            
+            await db.SaveChangesAsync();
+
+            return NoContent();
+
+        }
 
             [HttpDelete]
             public async ActionResult delete([FromRoute]int id) {
