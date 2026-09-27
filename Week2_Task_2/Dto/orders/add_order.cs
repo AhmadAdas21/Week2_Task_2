@@ -13,5 +13,7 @@ namespace Week2_Task_2.Dto.orders
         public float total { get; set; }
         [Required]
         public int customer_id { get; set; }
+      //  [Required]
+        
     }
 }

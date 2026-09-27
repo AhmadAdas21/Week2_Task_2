@@ -10,15 +10,18 @@ namespace Week2_Task_2.models
         public string description { get; set; }
         public float price { get; set; }
         public bool active { get; set; } = false;
+        public string ksu { get; set; }
+        public List<order_item>items { get; set; }
 
 
-        public product (int id, string name, string description, float price,bool active)
+        public product (int id, string name, string description, float price,bool active,string k)
         {
             this.id = id;
             this.name = name;
             this.description = description;
             this.price = price;
             this.active = active;
+            this.ksu = k;
         }
     }
 }

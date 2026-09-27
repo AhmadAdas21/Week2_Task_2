@@ -10,6 +10,9 @@ namespace Week2_Task_2.Dto.product
         public float price { get; set; }
         [Required]
         public string description { get; set; }
+        [Required]
+
+        public string ksu { get; set; }
 
     }
 }

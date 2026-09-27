@@ -1,6 +1,8 @@
-﻿namespace Week2_Task_2.Controllers
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Week2_Task_2.Controllers
 {
-    public class product
+    public class product:ControllerBase
     {
     }
 }

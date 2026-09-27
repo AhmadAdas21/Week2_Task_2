@@ -39,8 +39,7 @@ namespace Week2_Task_2.services
         }
 
 
-        public async Task<customer> CreateAsync(
-            customer customer)
+        public async Task<customer> CreateAsync( customer customer)
         {
             await _data.Customers.AddAsync(customer);
 
@@ -52,8 +51,7 @@ namespace Week2_Task_2.services
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var customer =
-                await _data.Customers.FindAsync(id);
+            var customer =await _data.Customers.FindAsync(id);
 
             if (customer == null)
                 return false;
@@ -64,6 +62,18 @@ namespace Week2_Task_2.services
 
             return true;
         }
+        /*var c =await  _data.Customers.FindAsync(id);
+        _data.customers.remove(c);
+            await _data.saveChangesAsync();
+
+
+        */
+        public void add_customer(customer customer)
+        {
+
+        }
+
+
 
     }
 }
