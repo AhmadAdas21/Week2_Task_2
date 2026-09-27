@@ -17,6 +17,10 @@ namespace Week2_Task_2.models
             this.email = email;
             this.orders = o;
         }
+        public customer()
+        {
+
+        }
 
     }
 }

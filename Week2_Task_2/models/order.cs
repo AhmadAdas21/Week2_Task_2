@@ -18,6 +18,10 @@ namespace Week2_Task_2.models
         public string status { get; set; } = "Pending";
 
         public DateTime created_date { get; set; } = DateTime.Now;
+        public order()
+        {
+
+        }
 
         public order(int id,int customer_id,List<order_item> item,float total,customer customer,string status,DateTime now)
         {

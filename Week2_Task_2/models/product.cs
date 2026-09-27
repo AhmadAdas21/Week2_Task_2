@@ -12,8 +12,12 @@ namespace Week2_Task_2.models
         public bool active { get; set; } = false;
         public string ksu { get; set; }
         public List<order_item>items { get; set; }
+        int stock { get; set; }
 
+        public product()
+        {
 
+        }
         public product (int id, string name, string description, float price,bool active,string k)
         {
             this.id = id;

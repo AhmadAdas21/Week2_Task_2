@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="migration\" />
-    <Folder Include="sql\" />
   </ItemGroup>
 
 </Project>
