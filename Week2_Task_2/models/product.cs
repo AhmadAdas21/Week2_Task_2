@@ -1,7 +1,9 @@
-﻿namespace Week2_Task_2.models
+﻿using System.ComponentModel.DataAnnotations;
+namespace Week2_Task_2.models
 {
     public class product
     {
+        [Key]
         public int id { get; set; }
         public string name { get; set; }
         public string description { get; set; }

@@ -1,6 +1,6 @@
-﻿namespace Week2_Task_2.internal interface
+﻿namespace Week2_Task_2
 {
-    class iservices
+   public interface iservices
     {
     }
 }
