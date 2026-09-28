@@ -26,18 +26,17 @@ namespace Week2_Task_2.services
         }
       
 
-        public async Task<List<customer>> GetAllAsync()
+        public async Task<List<customer>> get_all()
         {
             return await _data.Customers.ToListAsync();
         }
 
-        public async Task<customer?> GetByIdAsync(int id)
+        public async Task<customer?> get_by_id(int id)
         {
-            return await _data.Customers
-                .FirstOrDefaultAsync(c => c.id == id);
+            return await _data.Customers.FirstOrDefaultAsync(c => c.id == id);
         }
 
-        public async Task<customer> CreateAsync(customer customer)
+        public async Task<customer> Create(customer customer)
         {
             await _data.Customers.AddAsync(customer);
 
@@ -46,7 +45,7 @@ namespace Week2_Task_2.services
             return customer;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> Delete(int id)
         {
             var customer = await _data.Customers.FindAsync(id);
 

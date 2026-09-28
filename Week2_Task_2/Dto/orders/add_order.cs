@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Week2_Task_2.models;
+using Week2_Task_2.Dto.order_item;
 
 namespace Week2_Task_2.Dto.orders
 {
