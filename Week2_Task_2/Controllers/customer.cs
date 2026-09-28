@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Intrinsics.Arm;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -52,9 +53,10 @@ namespace Week2_Task_2.Controllers
             };
 
             await _service.CreateAsync(customer);
+            return Ok(customer);
         }
-        [HttpPut]
-        public async ActionResult<response_customer> update(update_customer dto, int id)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<List<response_customer>>>update(int id, create_customer dto)
         {
             var x = await db.Customers.FirstOrDefaultAsync(x => x.id == id);
             if (x == null) {
@@ -66,15 +68,28 @@ namespace Week2_Task_2.Controllers
             x.email = dto.email;
             
             await db.SaveChangesAsync();
+            
 
             return NoContent();
 
         }
 
-            [HttpDelete]
-            public async ActionResult delete([FromRoute]int id) {
-
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<List<response_customer>>>delete(int id)
+    {
+            if (id< 0)
+            {
+                return BadRequest("must be upper then 0");
             }
+
+            var x=await db.Customers.FirstAsync(x => x.id == id);
+           _service.remove_customer(x);
+            return NoContent();
+    }
+
+        
+
+            
 
 
 

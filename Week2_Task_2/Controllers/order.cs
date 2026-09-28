@@ -1,5 +1,6 @@
 ﻿
 using System.Runtime.Intrinsics.Arm;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Week2_Task_2.Data;
@@ -42,21 +43,24 @@ namespace Week2_Task_2.Controllers
             return Ok(x);
         }
         [HttpPost]
-        public async ActionResult<response_order> Create([FromBody]create_customer dto)
+        public async Task<ActionResult<response_order>> Create([FromBody] add_order dto)
         {
-          //  validate(dto);
-            var c=se.add_customer(dto);
-            return CreatedAtAction(c);
+            if (dto == null)
+            {
+                return BadRequest("the form is null");
+            }
 
-         //  ActionResult
+            se.add_order(dto);
+
+            return Ok(dto);
         }
-        [HttpPut]
-        public async ActionResult<response_order> update([FromBody]update_customer dto,int id)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<List<response_order>>>update(int id,[FromBody]add_order dto)
         {
             var x=await dp.order.FirstOrDefaultAsync(x=>x.id==id);
             if (id < 0)
             {
-                return BadRequest("the id must be above 0")
+                return BadRequest("the id must be above 0");
             }
             bool updated = se.update_customer(id, dto);
             if (updated)
@@ -67,16 +71,20 @@ namespace Week2_Task_2.Controllers
             {
                 return NotFound("not founded");
             }
+            return NoContent();
             //validate(dto);
 
         }
         [HttpDelete("{id}")]
-        public async ActionResult<response_order> delete(int id)
+        public async Task<ActionResult<List<response_order>>> delete(int id)
         {
             var x = await dp.order.FirstOrDefaultAsync(x => x.id == id);
-            if (id < 0) {
-                return BadRequest("must be above 0")}
+            if (id < 0)
+            {
+                return BadRequest("must be above 0");
+            }
             se.remove_customer(x);
+            return NoContent();
 
 
     }
