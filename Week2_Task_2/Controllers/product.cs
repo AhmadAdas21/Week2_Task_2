@@ -90,7 +90,7 @@ namespace Week2_Task_2.Controllers
             
         }
         [HttpDelete("{id}")]
-        public async Task<ActionResult<response_prod>>delete(int id)
+        public async Task<ActionResult<response_prod>>Delete(int id)
         {
             if(id < 0)
             {
@@ -100,6 +100,7 @@ namespace Week2_Task_2.Controllers
             var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
             _data.prod.Remove(x);
             await _data.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
