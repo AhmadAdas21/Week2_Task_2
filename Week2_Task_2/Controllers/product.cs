@@ -24,12 +24,17 @@ namespace Week2_Task_2.Controllers
         [HttpGet]
         public async Task<ActionResult<List<response_prod>>> getall()
         {
-            return Ok(s.getall());
+            var c = await _data.prod.ToListAsync();
+            return Ok(c);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<response_prod>> get_by_id(int d)
         {
+            if (d < 0)
+            {
+                return BadRequest("the Is must be greater than 0or zero");
+            }
             var x = await _data.prod.FirstOrDefaultAsync(x => x.id == d);
 
             if (x == null)
@@ -40,7 +45,7 @@ namespace Week2_Task_2.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<response_prod>> crate([FromBody] add_prod d)
+        public async Task<ActionResult<response_prod>> Create([FromBody] add_prod d)
         {
             if (d == null)
             {
@@ -54,10 +59,11 @@ namespace Week2_Task_2.Controllers
                 description = d.description,
                 ksu = d.ksu
             };
+            await _data.prod.AddAsync(x);
+            await _data.SaveChangesAsync();
 
-            s.add_product(x);
-
-            return Ok("Product created successfully");
+           
+            return CreatedAtAction(nameof(get_by_id), new { id = x.id }, x);
         }
         [HttpPut("{id}")]
         public async Task<ActionResult<response_prod>>update(update_prod d,int id)
@@ -68,12 +74,18 @@ namespace Week2_Task_2.Controllers
             }
             var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
             if (x == null)
-            {
+           {
                 return BadRequest("the product is null");
             }
             x.name = d.name;
             x.price = d.price;
             x.description = d.description;
+            x.active = d.active;
+            x.stock = d.stock;
+
+            await _data.SaveChangesAsync();
+
+
             return NoContent();
             
         }
@@ -86,7 +98,8 @@ namespace Week2_Task_2.Controllers
 
             }
             var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
-            return Ok(s.remove_product);
+            _data.prod.Remove(x);
+            await _data.SaveChangesAsync();
         }
     }
 }

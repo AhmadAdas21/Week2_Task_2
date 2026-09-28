@@ -1,5 +1,6 @@
-﻿using Week2_Task_2.Controllers;
-using Week2_Task_2.Dto.customer;
+﻿using Week2_Task_2.Dto.customer;
+using Week2_Task_2.models;
+
 
 namespace Week2_Task_2
 {

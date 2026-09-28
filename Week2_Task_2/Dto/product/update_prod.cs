@@ -12,5 +12,6 @@ namespace Week2_Task_2.Dto.product
         public string description { get; set; }
         [Required]
         public bool active { get; set; }
+        public int stock { get; set; }
     }
 }

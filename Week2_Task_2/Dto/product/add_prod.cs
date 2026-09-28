@@ -6,13 +6,20 @@ namespace Week2_Task_2.Dto.product
     {
         [Required]
         public string name { get; set; }
+
         [Required]
         public float price { get; set; }
+
         [Required]
         public string description { get; set; }
-        [Required]
 
+        [Required]
         public string ksu { get; set; }
+
+        [Required]
+        public int stock { get; set; }
+        [Required]
+        public bool active { get; set; }
 
     }
 }

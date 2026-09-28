@@ -53,7 +53,7 @@ namespace Week2_Task_2.Controllers
                 email = dto.email
             };
 
-            await _service.CreateAsync(customer);
+            await _service.Create(customer);
             return Ok(customer);
         }
         [HttpPut("{id}")]
@@ -85,7 +85,7 @@ namespace Week2_Task_2.Controllers
             }
             var x = db.Customers.FirstOrDefault(x => x.id == id);
 
-            bool s = await _service.DeleteAsync(id);
+            bool s = await _service.Delete(id);
 
             if (!s)
             {
