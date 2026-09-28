@@ -5,6 +5,13 @@ namespace Week2_Task_2
 {
    public interface iservices
     {
+        Task<List<customer>> GetAllAsync();
+
+        Task<customer?> GetByIdAsync(int id);
+
+        Task<customer> CreateAsync(customer customer);
+
+        Task<bool> DeleteAsync(int id);
         public void add_customer(customer c);
         public void remove_customer(customer customer);
         public void update_customer(int id, customer cu);
@@ -19,7 +26,7 @@ namespace Week2_Task_2
         void remove_customer(models.order? x);
         void remove_customer(models.customer x);
 
-        public void add_order
+      //public void add_order
         
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.Intrinsics.Arm;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -25,11 +26,11 @@ namespace Week2_Task_2.Controllers
             _service = service;
         }
 
-         [HttpGet]   
-        public async Task< ActionResult<List<models.customer>>> GetAll()
+        [HttpGet]
+        public async Task<ActionResult<List<models.customer>>> GetAll()
         {
-           var x= await db.Customers.ToListAsync();
-            return Ok(x);   
+            var x = await db.Customers.ToListAsync();
+            return Ok(x);
 
         }
         [HttpGet("{id}")]
@@ -44,7 +45,7 @@ namespace Week2_Task_2.Controllers
             return Ok(x);
         }
         [HttpPost]
-       public async Task<ActionResult<response_customer>> Create(create_customer dto)
+        public async Task<ActionResult<response_customer>> Create(create_customer dto)
         {
             var customer = new models.customer
             {
@@ -56,43 +57,50 @@ namespace Week2_Task_2.Controllers
             return Ok(customer);
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult<List<response_customer>>>update(int id, create_customer dto)
+        public async Task<ActionResult<List<response_customer>>> update(int id, create_customer dto)
         {
             var x = await db.Customers.FirstOrDefaultAsync(x => x.id == id);
-            if (x == null) {
+            if (x == null)
+            {
 
                 return NotFound();
 
             }
             x.name = dto.name;
             x.email = dto.email;
-            
+
             await db.SaveChangesAsync();
-            
+
 
             return NoContent();
 
         }
 
-    [HttpDelete("{id}")]
-    public async Task<ActionResult<List<response_customer>>>delete(int id)
-    {
-            if (id< 0)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<List<response_customer>>> delete(int id)
+        {
+            if (id < 0)
             {
-                return BadRequest("must be upper then 0");
+                return BadRequest("id must be greater than 0");
+            }
+            var x = db.Customers.FirstOrDefault(x => x.id == id);
+
+            bool s = await _service.DeleteAsync(id);
+
+            if (!s)
+            {
+                return NotFound();
             }
 
-            var x=await db.Customers.FirstAsync(x => x.id == id);
-           _service.remove_customer(x);
             return NoContent();
-    }
 
-        
 
-            
+
+
 
 
 
 
         }
+    }
 }

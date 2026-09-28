@@ -7,7 +7,7 @@ using Week2_Task_2.Data;
 
 namespace Week2_Task_2.services
 {
-    public class services:iservices
+    public class services : iservices
     {
 
       /*  public async Task<customer> AddCustomer(customer customer)
@@ -24,22 +24,20 @@ namespace Week2_Task_2.services
         {
             _data = c;
         }
-
+      
 
         public async Task<List<customer>> GetAllAsync()
         {
             return await _data.Customers.ToListAsync();
-          //  return  _data.Customers.ToListAsync();
         }
 
-
-        public async Task<customer> GetByIdAsync(int id)
+        public async Task<customer?> GetByIdAsync(int id)
         {
-            return await _data.Customers.FirstOrDefaultAsync(c => c.id == id);
+            return await _data.Customers
+                .FirstOrDefaultAsync(c => c.id == id);
         }
 
-
-        public async Task<customer> CreateAsync( customer customer)
+        public async Task<customer> CreateAsync(customer customer)
         {
             await _data.Customers.AddAsync(customer);
 
@@ -48,10 +46,9 @@ namespace Week2_Task_2.services
             return customer;
         }
 
-
         public async Task<bool> DeleteAsync(int id)
         {
-            var customer =await _data.Customers.FindAsync(id);
+            var customer = await _data.Customers.FindAsync(id);
 
             if (customer == null)
                 return false;
@@ -62,16 +59,8 @@ namespace Week2_Task_2.services
 
             return true;
         }
-        /*var c =await  _data.Customers.FindAsync(id);
-        _data.customers.remove(c);
-            await _data.saveChangesAsync();
 
-
-        */
-        public void add_customer(customer customer)
-        {
-
-        }
+       
 
 
 
