@@ -18,13 +18,13 @@ namespace Week2_Task_2.models
         {
 
         }
-        public product (int id, string name, string description, float price,bool active,string k)
+        public product ( string name, string description, float price,string k)
         {
-            this.id = id;
+           //his.id = id;
             this.name = name;
             this.description = description;
             this.price = price;
-            this.active = active;
+         // this.active = active;
             this.ksu = k;
         }
     }

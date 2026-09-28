@@ -8,12 +8,11 @@ namespace Week2_Task_2.Dto.orders
         //  public string name { get; set; }
         //  order s = new order(int id ,);
         [Required]
-        public string name { get; set; }
-        [Required]
-        public float total { get; set; }
-        [Required]
         public int customer_id { get; set; }
-      //  [Required]
-        
+
+        [Required]
+        public List<add_order_item> items { get; set; }
+        //  [Required]
+
     }
 }
