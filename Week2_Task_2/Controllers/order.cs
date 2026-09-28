@@ -7,6 +7,7 @@ using Week2_Task_2.Data;
 using Week2_Task_2.Dto.customer;
 using Week2_Task_2.Dto.orders;
 using Week2_Task_2.services;
+using Week2_Task_2.models;
 
 namespace Week2_Task_2.Controllers
 {
@@ -50,9 +51,26 @@ namespace Week2_Task_2.Controllers
                 return BadRequest("the form is null");
             }
 
-            se.add_order(dto);
+            if (dto.customer_id < 0 || await dp.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id) == null)
+            {
+                return BadRequest("the customer id is invalid or the customer does not exist");
+            }
 
-            return Ok(dto);
+            var x = await dp.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id);
+
+            var order = new models.order
+            {
+                customer = x,
+                customer_id = dto.customer_id,
+                status = "not completed",
+                created_date = DateTime.Now,
+                order_items = new List<models.order_item>()
+            };
+
+            await dp.order.AddAsync(order);
+            await dp.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(get_by_id), new { id = order.id }, order);
         }
         [HttpPut("{id}")]
         public async Task<ActionResult<List<response_order>>>update(int id,[FromBody]add_order dto)
@@ -62,15 +80,11 @@ namespace Week2_Task_2.Controllers
             {
                 return BadRequest("the id must be above 0");
             }
-            bool updated = se.update_customer(id, dto);
-            if (updated)
-            {
-                return NoContent();
-            }
-            else
-            {
-                return NotFound("not founded");
-            }
+            
+            x.customer_id=dto.customer_id;
+          //x.status = dto.status;
+
+
             return NoContent();
             //validate(dto);
 
@@ -83,9 +97,17 @@ namespace Week2_Task_2.Controllers
             {
                 return BadRequest("must be above 0");
             }
-            se.remove_customer(x);
-            return NoContent();
 
+            if (x == null)
+            {
+                return NotFound("Order not found");
+            }
+
+            dp.order.Remove(x); 
+            await dp.SaveChangesAsync(); 
+
+            return NoContent();
+        }
 
     }
 }

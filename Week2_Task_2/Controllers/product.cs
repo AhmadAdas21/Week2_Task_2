@@ -57,7 +57,9 @@ namespace Week2_Task_2.Controllers
                 name = d.name,
                 price = d.price,
                 description = d.description,
-                ksu = d.ksu
+                ksu = d.ksu,
+                stock = d.stock,
+                active = d.active
             };
             await _data.prod.AddAsync(x);
             await _data.SaveChangesAsync();
