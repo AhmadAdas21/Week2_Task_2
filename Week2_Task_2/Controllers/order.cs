@@ -55,8 +55,21 @@ namespace Week2_Task_2.Controllers
             {
                 return BadRequest("the customer id is invalid or the customer does not exist");
             }
+            
 
             var x = await dp.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id);
+            var order = new models.order
+            {
+                customer = x,
+                customer_id = dto.customer_id,
+                status = "Pending",
+                created_date = DateTime.Now,
+                order_items = new List<models.order_item>()
+            };
+            if (dto.items == null && dto.items.Count == 0)
+            {
+                return BadRequest( "the order must have at least one item" );
+            }
             foreach (var o in dto.items)
             {
                 var p= await dp.prod.FirstOrDefaultAsync(p => p.id == o.product_id);
@@ -82,7 +95,14 @@ namespace Week2_Task_2.Controllers
                 p.stock -= o.quantity;
 
 
-
+                var oi= new models.order_item
+                {
+                    product_id = p.id,
+                    product = p,
+                    quantity = o.quantity,
+                    price = p.price
+                };
+                order.order_items.Add(oi);
 
             }
 
@@ -100,14 +120,7 @@ namespace Week2_Task_2.Controllers
             }
 
 
-            var order = new models.order
-            {
-                customer = x,
-                customer_id = dto.customer_id,
-                status = "not completed",
-                created_date = DateTime.Now,
-                order_items = new List<models.order_item>()
-            };
+          
             if (order.order_items == null)
             {
                 return BadRequest("the order item is null");
