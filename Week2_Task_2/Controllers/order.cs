@@ -58,6 +58,33 @@ namespace Week2_Task_2.Controllers
 
             var x = await dp.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id);
 
+            var s = await dp.order.FirstOrDefaultAsync(x => x.customer_id == dto.customer_id);
+
+           
+            var d = await dp.oi.FirstOrDefaultAsync(x => x.order_id == s.id);
+            var prod = await dp.prod.FirstOrDefaultAsync(x => x.id == d.product_id);
+            if (d == null || d.product == null) 
+            {
+                return BadRequest("the product is null");
+            }
+            if (d.product.active == false)
+            {
+                return BadRequest("the product is not active");
+            }
+            if (d.quantity <= 0)
+            {
+                return BadRequest("the quantity must be grater than 0");
+            }
+            if (d.quantity > prod.stock)
+            {
+                return BadRequest("the product quantity in the order is more than the product in the stock");
+            }
+            if (s.order_items == null)
+            {
+                return BadRequest("the order must have one item ");
+            }
+
+
             var order = new models.order
             {
                 customer = x,
@@ -66,9 +93,11 @@ namespace Week2_Task_2.Controllers
                 created_date = DateTime.Now,
                 order_items = new List<models.order_item>()
             };
+            
 
             await dp.order.AddAsync(order);
             await dp.SaveChangesAsync();
+            prod.stock-=d.quantity;
 
             return CreatedAtAction(nameof(get_by_id), new { id = order.id }, order);
         }
@@ -80,8 +109,13 @@ namespace Week2_Task_2.Controllers
             {
                 return BadRequest("the id must be above 0");
             }
+            if (x.status == "complete")
+            {
+                return BadRequest("you cant modify a complete order");
+            }
             
             x.customer_id=dto.customer_id;
+           
           //x.status = dto.status;
 
 
