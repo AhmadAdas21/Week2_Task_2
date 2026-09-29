@@ -146,14 +146,15 @@ namespace Week2_Task_2.Controllers
             {
                 return BadRequest("the id must be above 0");
             }
-            if (x.status == "complete")
-            {
-                return BadRequest("you cant modify a complete order");
-            }
             if (x == null)
             {
                 return NotFound("order not found");
             }
+            if (x.status == "complete")
+            {
+                return BadRequest("you cant modify a complete order");
+            }
+           
 
             x.customer_id=dto.customer_id;
 
