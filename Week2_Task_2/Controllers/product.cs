@@ -43,10 +43,10 @@ namespace Week2_Task_2.Controllers
             string?orderby = "asc";
           */
 
-            await s.get_products(page, pageSize, search, minPrice, maxPrice, (bool)inStock, sortBy, sortDirection);
+     var d=await s.get_products(page, pageSize, search, minPrice, maxPrice,inStock, sortBy, sortDirection);
 
             // var c = await _data.prod.ToListAsync();
-            return Ok(s);
+            return Ok(d);
         }
 
         [HttpGet("{id}")]
