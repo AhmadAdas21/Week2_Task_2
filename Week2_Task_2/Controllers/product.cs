@@ -38,8 +38,8 @@ namespace Week2_Task_2.Controllers
 
             await s.get_products(page, size, search, (int)min, (int)max, (bool)inStock, sortby, orderby);
 
-            var c = await _data.prod.ToListAsync();
-            return Ok(c);
+            // var c = await _data.prod.ToListAsync();
+            return Ok();
         }
 
         [HttpGet("{id}")]

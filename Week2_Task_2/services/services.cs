@@ -104,9 +104,13 @@ namespace Week2_Task_2.services
                         query=query.OrderByDescending(p => p.name);
                     }
                 }
+                query=query.Skip((page - 1) * pageSize).Take(pageSize);
+
                 
-                
+
+
             }
+            return await query.ToListAsync();
 
         }
 
