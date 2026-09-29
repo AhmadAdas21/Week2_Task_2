@@ -57,6 +57,15 @@ namespace Week2_Task_2.Controllers
             }
 
             var x = await dp.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id);
+            foreach (var o in dto.items)
+            {
+                var p= await dp.prod.FirstOrDefaultAsync(p => p.id == o.product_id);
+
+                if (p == null)
+                {
+                    return BadRequest( "product  does not exist" );
+                }
+            }
 
             var s = await dp.order.FirstOrDefaultAsync(x => x.customer_id == dto.customer_id);
 
