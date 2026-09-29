@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Week2_Task_2.models;
 using Week2_Task_2.Data;
 
-
-
 namespace Week2_Task_2.services
 {
     public class services : iservices
@@ -26,10 +24,10 @@ namespace Week2_Task_2.services
         }
       
 
-        public async Task<List<customer>> get_all()
-        {
-            return await _data.Customers.ToListAsync();
-        }
+      //public async Task<List<customer>> get_all()
+      //{
+        //  return await _data.Customers.ToListAsync();
+     // }
 
         public async Task<customer?> get_by_id(int id)
         {
@@ -59,9 +57,13 @@ namespace Week2_Task_2.services
             return true;
         }
 
+
+
+        public async Task iservices.get_products(int page, object pageSize, string? search, object minPrice, object maxPrice, bool inStock, object sortBy, object sortDirection)
+        {
+           
+        }
+
        
-
-
-
     }
 }

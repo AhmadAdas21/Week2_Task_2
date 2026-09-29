@@ -5,12 +5,14 @@ using Week2_Task_2.Dto.customer;
 using Week2_Task_2.Dto.product;
 using Week2_Task_2.services;
 using Week2_Task_2.models;
+using System.Drawing.Printing;
+using System.Globalization;
 
 namespace Week2_Task_2.Controllers
 {
     [ApiController]
     [Route("API/product")]
-    public class producti: ControllerBase
+    public class producti : ControllerBase
     {
         private readonly data_base _data;
         private readonly iservices s;
@@ -24,6 +26,18 @@ namespace Week2_Task_2.Controllers
         [HttpGet]
         public async Task<ActionResult<List<response_prod>>> getall()
         {
+            int page = 1;
+            int size = 10;
+            string?search= null;
+            int?min = 0; 
+            int?max = int.MaxValue; 
+            bool?inStock = false;
+            string?sortby = "name"; 
+            string?orderby = "asc";
+
+
+            await s.get_products(page, size, search, (int)min, (int)max, (bool)inStock, sortby, orderby);
+
             var c = await _data.prod.ToListAsync();
             return Ok(c);
         }
@@ -64,11 +78,11 @@ namespace Week2_Task_2.Controllers
             await _data.prod.AddAsync(x);
             await _data.SaveChangesAsync();
 
-           
             return CreatedAtAction(nameof(get_by_id), new { id = x.id }, x);
         }
+
         [HttpPut("{id}")]
-        public async Task<ActionResult<response_prod>>update(update_prod d,int id)
+        public async Task<ActionResult<response_prod>> update(update_prod d, int id)
         {
             if (id < 0)
             {
@@ -76,7 +90,7 @@ namespace Week2_Task_2.Controllers
             }
             var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
             if (x == null)
-           {
+            {
                 return BadRequest("the product is null");
             }
             x.name = d.name;
@@ -87,23 +101,20 @@ namespace Week2_Task_2.Controllers
 
             await _data.SaveChangesAsync();
 
-
             return NoContent();
-            
         }
+
         [HttpDelete("{id}")]
-        public async Task<ActionResult<response_prod>>Delete(int id)
+        public async Task<ActionResult<response_prod>> Delete(int id)
         {
-            if(id < 0)
+            if (id < 0)
             {
                 return BadRequest("must be above 0");
-
             }
             var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
             _data.prod.Remove(x);
             await _data.SaveChangesAsync();
             return NoContent();
         }
-       
     }
 }
