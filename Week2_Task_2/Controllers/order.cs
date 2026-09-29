@@ -13,12 +13,12 @@ namespace Week2_Task_2.Controllers
 {
     [ApiController]
     [Route("api/orders")]
-    public class order : ControllerBase
+    public class orderi: ControllerBase
     {
         private readonly data_base dp;
         private readonly iservices se;
 
-        public order(data_base dp, iservices se)
+        public orderi(data_base dp, iservices se)
         {
             this.dp = dp;
             this.se = se;

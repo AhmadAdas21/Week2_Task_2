@@ -7,6 +7,7 @@ namespace Week2_Task_2.Dto.customer
         [Required]
         public string name { get; set; }
         [Required]
+        [EmailAddress]
         public string email { get; set; }
 
 

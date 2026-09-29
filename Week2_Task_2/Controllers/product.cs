@@ -10,12 +10,12 @@ namespace Week2_Task_2.Controllers
 {
     [ApiController]
     [Route("API/product")]
-    public class product : ControllerBase
+    public class producti: ControllerBase
     {
         private readonly data_base _data;
         private readonly iservices s;
 
-        public product(iservices service, data_base d)
+        public producti(iservices service, data_base d)
         {
             _data = d;
             s = service;
@@ -104,5 +104,6 @@ namespace Week2_Task_2.Controllers
             await _data.SaveChangesAsync();
             return NoContent();
         }
+       
     }
 }

@@ -15,11 +15,11 @@ namespace Week2_Task_2.Controllers
     [Route("Api/customer")]
 
 
-    public class customer : ControllerBase
+    public class customeri: ControllerBase
     {
         private readonly data_base db;
         private readonly iservices _service;
-        public customer(data_base data, iservices service)
+        public customeri(data_base data, iservices service)
         {
 
             db = data;
