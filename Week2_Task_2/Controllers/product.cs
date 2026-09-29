@@ -11,7 +11,7 @@ using System.Globalization;
 namespace Week2_Task_2.Controllers
 {
     [ApiController]
-    [Route("API/product")]
+    [Route("api/products")]
     public class producti : ControllerBase
     {
         private readonly data_base _data;
@@ -24,9 +24,16 @@ namespace Week2_Task_2.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<response_prod>>> getall()
+        public async Task<ActionResult<List<product>>>get_all([FromQuery] int page = 1,
+    [FromQuery] int pageSize = 10,
+    [FromQuery] string? search = null,
+    [FromQuery] int? minPrice = null,
+    [FromQuery] int? maxPrice = null,
+    [FromQuery] bool? inStock = null,
+    [FromQuery] string? sortBy = null,
+    [FromQuery] string? sortDirection = "asc")
         {
-            int page = 1;
+          /*int page = 1;
             int size = 10;
             string?search= null;
             int?min = 0; 
@@ -34,12 +41,12 @@ namespace Week2_Task_2.Controllers
             bool?inStock = false;
             string?sortby = "name"; 
             string?orderby = "asc";
+          */
 
-
-            await s.get_products(page, size, search, (int)min, (int)max, (bool)inStock, sortby, orderby);
+            await s.get_products(page, pageSize, search, minPrice, maxPrice, (bool)inStock, sortBy, sortDirection);
 
             // var c = await _data.prod.ToListAsync();
-            return Ok();
+            return Ok(s);
         }
 
         [HttpGet("{id}")]
