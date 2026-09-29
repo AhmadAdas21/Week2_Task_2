@@ -46,6 +46,10 @@ namespace Week2_Task_2.Controllers
         [HttpPost]
         public async Task<ActionResult<response_order>> Create([FromBody] add_order dto)
         {
+           
+            await using var tt = await dp.Database.BeginTransactionAsync();
+         // await using var tt=await dp.Database.BeginTransactionAsync();
+            float total = 0;
             if (dto == null)
             {
                 return BadRequest("the form is null");
@@ -66,7 +70,7 @@ namespace Week2_Task_2.Controllers
                 created_date = DateTime.Now,
                 order_items = new List<models.order_item>()
             };
-            if (dto.items == null && dto.items.Count == 0)
+            if (dto.items == null || dto.items.Count == 0)
             {
                 return BadRequest( "the order must have at least one item" );
             }
@@ -102,34 +106,33 @@ namespace Week2_Task_2.Controllers
                     quantity = o.quantity,
                     price = p.price
                 };
+                total += p.price * o.quantity;
                 order.order_items.Add(oi);
 
             }
 
-            var s = await dp.order.FirstOrDefaultAsync(x => x.customer_id == dto.customer_id);
+         // var s = await dp.order.FirstOrDefaultAsync(x => x.customer_id == dto.customer_id);
 
            
        //   var d = await dp.oi.FirstOrDefaultAsync(x => x.order_id == s.id);
           //var prod = await dp.prod.FirstOrDefaultAsync(x => x.id == d.product_id);
            
            
+           order.total = total; 
            
-            if (s.order_items == null)
-            {
-                return BadRequest("the order must have one item ");
-            }
 
 
           
-            if (order.order_items == null)
-            {
-                return BadRequest("the order item is null");
-            }
+        //  if (order.order_items == null)
+          //{
+            //  return BadRequest("the order item is null");
+        //  }
            
             
 
             await dp.order.AddAsync(order);
             await dp.SaveChangesAsync();
+            await tt.CommitAsync();
         //  prod.stock-=d.quantity;
             
 
@@ -147,10 +150,16 @@ namespace Week2_Task_2.Controllers
             {
                 return BadRequest("you cant modify a complete order");
             }
-            
+            if (x == null)
+            {
+                return NotFound("order not found");
+            }
+
             x.customer_id=dto.customer_id;
-           
-          //x.status = dto.status;
+
+            //x.status = dto.status;
+
+            await dp.SaveChangesAsync();
 
 
             return NoContent();
@@ -171,8 +180,15 @@ namespace Week2_Task_2.Controllers
                 return NotFound("Order not found");
             }
 
-            dp.order.Remove(x); 
-            await dp.SaveChangesAsync(); 
+            var s = await dp.oi.Where(x => x.order_id == id).ToListAsync();  
+
+            foreach (var item in s)
+            {
+                item.product.stock += item.quantity;
+            }
+
+            dp.order.Remove(x);
+            await dp.SaveChangesAsync();
 
             return NoContent();
         }
