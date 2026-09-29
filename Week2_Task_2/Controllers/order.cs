@@ -60,34 +60,40 @@ namespace Week2_Task_2.Controllers
             foreach (var o in dto.items)
             {
                 var p= await dp.prod.FirstOrDefaultAsync(p => p.id == o.product_id);
+             // var oii= await dp.oi.FirstOrDefaultAsync(x =>x.product_id == p.id);
 
                 if (p == null)
                 {
                     return BadRequest( "product  does not exist" );
                 }
+                if(p.active == false)
+                {
+                    return BadRequest("the product is not active ");
+                }
+                if (p.stock < o.quantity)
+                {
+                    return BadRequest("the quatity of the order is above the stock ");
+                }
+                if(o.quantity <= 0)
+                {
+                    return BadRequest("the quantity must be above 0");
+                }
+               //ar pro = await dp.prod.FirstOrDefaultAsync(x => x.id == k.product_id);
+                p.stock -= o.quantity;
+
+
+
+
             }
 
             var s = await dp.order.FirstOrDefaultAsync(x => x.customer_id == dto.customer_id);
 
            
-            var d = await dp.oi.FirstOrDefaultAsync(x => x.order_id == s.id);
-            var prod = await dp.prod.FirstOrDefaultAsync(x => x.id == d.product_id);
-            if (d == null || d.product == null) 
-            {
-                return BadRequest("the product is null");
-            }
-            if (d.product.active == false)
-            {
-                return BadRequest("the product is not active");
-            }
-            if (d.quantity <= 0)
-            {
-                return BadRequest("the quantity must be grater than 0");
-            }
-            if (d.quantity > prod.stock)
-            {
-                return BadRequest("the product quantity in the order is more than the product in the stock");
-            }
+       //   var d = await dp.oi.FirstOrDefaultAsync(x => x.order_id == s.id);
+          //var prod = await dp.prod.FirstOrDefaultAsync(x => x.id == d.product_id);
+           
+           
+           
             if (s.order_items == null)
             {
                 return BadRequest("the order must have one item ");
@@ -102,11 +108,17 @@ namespace Week2_Task_2.Controllers
                 created_date = DateTime.Now,
                 order_items = new List<models.order_item>()
             };
+            if (order.order_items == null)
+            {
+                return BadRequest("the order item is null");
+            }
+           
             
 
             await dp.order.AddAsync(order);
             await dp.SaveChangesAsync();
-            prod.stock-=d.quantity;
+        //  prod.stock-=d.quantity;
+            
 
             return CreatedAtAction(nameof(get_by_id), new { id = order.id }, order);
         }
