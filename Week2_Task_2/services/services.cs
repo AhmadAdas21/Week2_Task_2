@@ -59,9 +59,55 @@ namespace Week2_Task_2.services
 
 
 
-        public async Task iservices.get_products(int page, object pageSize, string? search, object minPrice, object maxPrice, bool inStock, object sortBy, object sortDirection)
+        public async Task<List<product>> get_products(int page, int pageSize, string? search,int? minPrice,int? maxPrice,bool? inStock, string? sortBy,string? sortDirection)
         {
-           
+
+            var query = _data.prod.AsQueryable();
+            if(search != null)
+            {
+                query = query.Where(s => s.name == search);
+            }
+            if (minPrice != null)
+            {
+                query=query.Where(s=>s.price>minPrice);
+            }
+            if (maxPrice != null)
+            {
+                query = query.Where(o => o.price < maxPrice);
+            }
+            if (inStock ==true) 
+            {
+                query = query.Where(d => d.active == true);
+            }
+            if (sortBy != null)
+            {
+                if (sortBy == "price")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        query = query.OrderBy(p => p.price);
+                    }
+                    else if (sortDirection == "desc")
+                    {
+                        query = query.OrderByDescending(p => p.price);
+                    }
+
+                }
+                if (sortBy == "name")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        query = query.OrderBy(p => p.name);
+                    }
+                    else if(sortDirection == "desc")
+                    {
+                        query=query.OrderByDescending(p => p.name);
+                    }
+                }
+                
+                
+            }
+
         }
 
        

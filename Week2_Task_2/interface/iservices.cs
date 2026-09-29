@@ -12,10 +12,10 @@ namespace Week2_Task_2
 
         Task<customer> Create(customer customer);
 
-        Task get_products(int page, object pageSize, string? search, object minPrice, object maxPrice, bool inStock, object sortBy, object sortDirection);
+        
 
         Task<bool> Delete(int id);
-      //Task get_products(int page, object pageSize, string? search, object minPrice, object maxPrice, bool inStock, object sortBy, object sortDirection);
-        Task get_products(int page, int size, string? search, int min, int max, bool inStock, string sortby);
+        Task<List<product>> get_products( int page, int pageSize,string? search, int? minPrice, int? maxPrice, bool? inStock, string? sortBy, string? sortDirection);
+
     }
 }
