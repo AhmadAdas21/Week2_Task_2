@@ -166,6 +166,29 @@ namespace Order_Mangment_System_Test
 
             await connection.CloseAsync();
         }
+        [Fact]
+        public async Task DeleteOrder_RestoresProductStock()
+        {
+            //   private readonly data_base db;
+            // private readonly services se;
+            var customer = new customer
+            {
+                id = 12,
+                name="omar",
+                email="Omar@gmail.com"
+                
+
+            };
+            var product = new product
+            {
+                id=20,
+                name="banana",
+                description="yummy banan",
+                stock=500,
+                active=true,
+
+            };
+        }
     }
 }
     
