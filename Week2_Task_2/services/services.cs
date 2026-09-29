@@ -75,9 +75,13 @@ namespace Week2_Task_2.services
             {
                 query = query.Where(o => o.price < maxPrice);
             }
-            if (inStock ==true) 
+            if (inStock == true) 
             {
-                query = query.Where(d => d.active == true);
+                query = query.Where(d => d.stock>0);
+            }
+            if (inStock == false)
+            {
+                query = query.Where(l => l.stock == 0);
             }
             if (sortBy != null)
             {
@@ -104,12 +108,13 @@ namespace Week2_Task_2.services
                         query=query.OrderByDescending(p => p.name);
                     }
                 }
-                query=query.Skip((page - 1) * pageSize).Take(pageSize);
+                
 
                 
 
 
             }
+            query = query.Skip((page - 1) * pageSize).Take(pageSize);
             return await query.ToListAsync();
 
         }
