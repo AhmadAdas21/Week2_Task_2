@@ -22,31 +22,71 @@ namespace Order_Mangment_System_Test
         private readonly iservices s;
 
         [Fact]
-        public void CreateOrder_CustomerNotFound_ReturnsBadRequest()
+        public async Task if_create_order_and_the_customer_not_exixt_return_bad()
         {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            await connection.OpenAsync();
 
-            List<order> orders = new List<order>();
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
 
+            await using var db = new data_base(options);
 
-       /*   customer c = new customer
+            await db.Database.EnsureCreatedAsync();
+            var customer = new customer
             {
-                id = 10,
-                name = "Ahmad mohee",
-                email = "ahmad@gmail.com",
-                orders = orders
-            };*/
-         // db.AddAsync(c);
+                name = "abd",
+                email = "aaa@gmail.com"
 
-            order o = new();
-            orders.Add(o);
-            db.order.AddAsync(o);
-            db.SaveChanges();
+            };
+            await db.Customers.AddAsync(customer);
+            await db.SaveChangesAsync();
+            var prod = new product
+            {
+                id = 20,
+                name = "glass",
+                description = "ewewewew",
+                price = 20,
+                stock = 232,
+                active = true,
+                ksu = "sd-032"
 
+            };
+            await db.prod.AddAsync(prod);
+            await db.SaveChangesAsync();
+            var order = new add_order
+            {
+                customer_id = 1000,
+                items = new List<add_order_item>
+                {
+                     new add_order_item
+                     {
+
+                    product_id = 20,
+                    quantity = 5
+
+                     }
+
+                }
+
+            };
+
+            var service = new services(db);
             
+            var controller = new orderi(db, service);
+            var oo = await controller.Create(order);
+            db.SaveChangesAsync();
+            var bad =  Assert.IsType<BadRequestObjectResult>(oo.Result);
+            Assert.Equal("the customer id is invalid or the customer does not exist", bad.Value);
+
+
+           
+
+
+
 
         }
         [Fact]
-        public async Task CreateOrder_QuantityZero_ReturnsBadRequest()
+        public async Task if_quantity_Zero_return_bad()
         {
 
             var connection = new SqliteConnection("DataSource=:memory:");
@@ -110,7 +150,7 @@ namespace Order_Mangment_System_Test
             await connection.CloseAsync();
         }
         [Fact]
-        public async Task CreateOrder_QuantityAboveStock_ReturnsBadRequest()
+        public async Task creare_order_with_qunatity_above_the_Stock()
         {
             var connection = new SqliteConnection("DataSource=:memory:");
             await connection.OpenAsync();
@@ -169,7 +209,7 @@ namespace Order_Mangment_System_Test
             await connection.CloseAsync();
         }
         [Fact]
-        public async Task DeleteOrder_RestoresProductStock()
+        public async Task when_Delete_order_return_the_Stock_to_original()
         {
             var connection = new SqliteConnection("DataSource=:memory:");
             await connection.OpenAsync();
@@ -233,7 +273,7 @@ namespace Order_Mangment_System_Test
          //dawait connection.CloseAsync();
         }
         [Fact]
-        public async Task CreateOrder_InactiveProduct_ReturnsBadRequest()
+        public async Task ceate_order_with_inactive_product()
         {
 
             var connection = new SqliteConnection("DataSource=:memory:");
@@ -255,6 +295,7 @@ namespace Order_Mangment_System_Test
                 name="wheel",
                 description="sss",
                 stock=25,
+                price=100,
                 ksu="zos21",
                 active=false
             };
@@ -282,6 +323,399 @@ namespace Order_Mangment_System_Test
           
             Assert.Equal("the product is not active ", oo.Value);
 
+
+        }
+        [Fact]
+        public async Task create_order_with_empty_items()
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            await connection.OpenAsync();
+
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
+
+            await using var db = new data_base(options);
+
+            await db.Database.EnsureCreatedAsync();
+            var customer = new customer
+            {
+                name = "ahmad emad",
+                email="ahmadnnnn@gmadil.com"
+            };
+            await db.Customers.AddAsync(customer);
+            await db.SaveChangesAsync();
+
+            var product = new product
+            {
+                name = "charger",
+                description = "samsung phones charger",
+                price=50,
+                stock=100,
+                ksu="ch-302",
+                active=true
+
+            };
+            var order = new add_order
+            {
+                customer_id = customer.id,
+                items = new List<add_order_item>
+                {
+
+                }
+            };
+        //  await db.Customers.AddAsync(customer);
+            await db.prod.AddAsync(product);
+            await db.SaveChangesAsync();
+            services s= new services(db);
+            //var con=new Controller()
+            var c=new orderi(db, s);
+            // await db.order.AddAsync(order);
+            
+            var dd = await c.Create(order);
+            var bad= Assert.IsType<BadRequestObjectResult>(dd.Result);
+            Assert.Equal("the order must have at least one item", bad.Value);
+            
+
+        }
+        [Fact]
+        public async Task create_order_with_negative_quantity()
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            await connection.OpenAsync();
+
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
+
+            await using var db = new data_base(options);
+
+            await db.Database.EnsureCreatedAsync();
+            var customer = new customer
+            {
+                id = 12,
+                name = "shadi",
+                email = "shadi@hotmail.com"
+            };
+
+            var product = new product
+            {
+                id = 15,
+                name = "apple",
+                description = "a red and fresh apple",
+                price = 2,
+                ksu = "Aa-00",
+                stock = 1000,
+                active = true
+            };
+
+            var service = new services(db);
+
+            var controller = new orderi(db, service);
+            await db.Customers.AddAsync(customer);
+            await db.prod.AddAsync(product);
+
+            await db.SaveChangesAsync();
+
+            var dto = new add_order
+            {
+                customer_id = 12,
+
+                items = new List<add_order_item>
+                {
+                    new add_order_item
+                    {
+                        product_id = 15,
+                        quantity = -5
+                    }
+                }
+            };
+            // await db.Saved
+
+            var result = await controller.Create(dto);
+            var c = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("the quantity must be above 0", c.Value);
+
+        }
+        [Fact]
+        public async Task create_order_decrease_stock()
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            await connection.OpenAsync();
+
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
+
+            await using var db = new data_base(options);
+
+            await db.Database.EnsureCreatedAsync();
+
+            var customer = new customer
+            {
+                id = 12,
+                name = "omar",
+                email = "Omar@gmail.com"
+            };
+
+            var product = new product
+            {
+                id = 20,
+                name = "banana",
+                description = "yummy banana",
+                stock = 500,
+                ksu = "BAN-20",
+                active = true
+            };
+
+            await db.Customers.AddAsync(customer);
+            await db.prod.AddAsync(product);
+            await db.SaveChangesAsync();
+
+            var service = new services(db);
+            var controller = new orderi(db, service);
+
+            var order = new add_order
+            {
+                customer_id = customer.id,
+                items = new List<add_order_item>
+                {
+                    new add_order_item
+                    {
+                        product_id = 20,
+                        quantity = 10
+                    }
+                }
+            };
+
+
+            var d = await controller.Create(order);
+            var after = await db.prod.FindAsync(20);
+            await db.SaveChangesAsync();
+            Assert.Equal(490, after.stock);
+
+        }
+        [Fact]
+        public async Task create_calculate_correct_Total()
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            await connection.OpenAsync();
+
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
+
+            await using var db = new data_base(options);
+
+            await db.Database.EnsureCreatedAsync();
+
+            var customer = new customer
+            {
+                id = 12,
+                name = "omar",
+                email = "Omar@gmail.com"
+            };
+
+            var product = new product
+            {
+                id = 20,
+                name = "banana",
+                description = "yummy banana",
+                stock = 500,
+                ksu = "BAN-20",
+                price=5,
+                active = true
+            };
+
+            await db.Customers.AddAsync(customer);
+            await db.prod.AddAsync(product);
+            await db.SaveChangesAsync();
+
+            var service = new services(db);
+            var controller = new orderi(db, service);
+
+            var order = new add_order
+            {
+                customer_id = customer.id,
+                items = new List<add_order_item>
+                {
+                    new add_order_item
+                    {
+                        product_id = 20,
+                        quantity = 10
+                    }
+                }
+            };
+
+
+            var d = await controller.Create(order);
+            var final=await db.order.FirstOrDefaultAsync(x=>x.customer_id==customer.id);
+            await db.SaveChangesAsync();
+            
+            Assert.Equal(50, final.total);
+            
+
+        }
+        [Fact]
+        public async Task create_order_with_initial_Status_pending()
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            await connection.OpenAsync();
+
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
+
+            await using var db = new data_base(options);
+
+            await db.Database.EnsureCreatedAsync();
+
+            var customer = new customer
+            {
+                id = 12,
+                name = "omar",
+                email = "Omar@gmail.com"
+            };
+
+            var product = new product
+            {
+                id = 20,
+                name = "banana",
+                description = "yummy banana",
+                stock = 500,
+                ksu = "BAN-20",
+                price = 5,
+                active = true
+            };
+
+            await db.Customers.AddAsync(customer);
+            await db.prod.AddAsync(product);
+            await db.SaveChangesAsync();
+
+            var service = new services(db);
+            var controller = new orderi(db, service);
+
+            var order = new add_order
+            {
+                customer_id = customer.id,
+                items = new List<add_order_item>
+                {
+                    new add_order_item
+                    {
+                        product_id = 20,
+                        quantity = 10
+                    }
+                }
+            };
+
+
+            var d = await controller.Create(order);
+            var final=await db.order.FirstOrDefaultAsync(x=>x.customer_id==customer.id);
+            Assert.Equal("Pending", final.status);
+
+        }
+        [Fact]
+        public async Task create_order_and_the_order_will_exist_in_database()
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+        await connection.OpenAsync();
+
+        var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
+
+        await using var db = new data_base(options);
+
+    await db.Database.EnsureCreatedAsync();
+
+    var customer = new customer
+    {
+        id = 12,
+        name = "omar",
+        email = "Omar@gmail.com"
+    };
+
+    var product = new product
+    {
+        id = 20,
+        name = "banana",
+        description = "yummy banana",
+        stock = 500,
+        ksu = "BAN-20",
+        price = 5,
+        active = true
+    };
+
+    await db.Customers.AddAsync(customer);
+    await db.prod.AddAsync(product);
+    await db.SaveChangesAsync();
+
+    var service = new services(db);
+    var controller = new orderi(db, service);
+
+    var order = new add_order
+    {
+        customer_id = customer.id,
+        items = new List<add_order_item>
+                {
+                    new add_order_item
+                    {
+                        product_id = 20,
+                        quantity = 10
+                    }
+                }
+    };
+
+
+    var d = await controller.Create(order);
+            var final=await db.order.FirstOrDefaultAsync();
+            Assert.NotNull(final);
+}
+        [Fact]
+        public async Task create_order_and_the_order_will_returned_by_id()
+
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            await connection.OpenAsync();
+
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
+
+            await using var db = new data_base(options);
+
+            await db.Database.EnsureCreatedAsync();
+
+            var customer = new customer
+            {
+                id = 12,
+                name = "omar",
+                email = "Omar@gmail.com"
+            };
+
+            var product = new product
+            {
+                id = 20,
+                name = "banana",
+                description = "yummy banana",
+                stock = 500,
+                ksu = "BAN-20",
+                price = 5,
+                active = true
+            };
+
+            await db.Customers.AddAsync(customer);
+            await db.prod.AddAsync(product);
+            await db.SaveChangesAsync();
+
+            var service = new services(db);
+            var controller = new orderi(db, service);
+
+            var order = new add_order
+            {
+                customer_id = customer.id,
+                items = new List<add_order_item>
+                {
+                    new add_order_item
+                    {
+                        product_id = 20,
+                        quantity = 10
+                    }
+                }
+            };
+
+
+            var d = await controller.Create(order);
+            var ord = await db.order.FirstOrDefaultAsync();
+            var res= controller.get_by_id(ord.id);
+
+            Assert.NotNull(res);
 
         }
     }
