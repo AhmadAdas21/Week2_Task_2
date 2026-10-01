@@ -1,10 +1,5 @@
 ﻿using Week2_Task_2.models;
 using Week2_Task_2.Data;
-using Week2_Task_2.Controllers;
-
-
-
-
 using Week2_Task_2.Data;
 using Week2_Task_2.Dto.reservation;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +16,7 @@ namespace Week2_Task_2.services
             this.db = db;
             this.logger = logger;
         }
-        public async Task<IResult> create(add_reservation dto)
+        public async Task<reservartion> Create(add_reservation dto)
         {
             var cus = await db.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id);
             if (cus == null)
@@ -78,7 +73,39 @@ namespace Week2_Task_2.services
 
             await db.reservations.AddAsync(reservation);
             await db.SaveChangesAsync();
-          return Results.Created($"/reservations/{reservation.id}", reservation);
+            return reservation;
         }
+        public async Task <reservartion> GetById(int id)
+        {
+            var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
+            if (res == null)
+            {
+                logger.LogWarning("the reservation not existing");
+                throw new Exception("the reservation dosent exist");
+            }
+            else
+            {
+                logger.LogInformation("the reservation exist");
+                return res;
+            }
+
+        }
+        public async Task<bool> Cancel(int id)
+        {
+            var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
+            if (res == null)
+            {
+                logger.LogWarning("the reservation id with id {id} dosent exist", id);
+                throw new Exception("the reservation dosent exist");
+            }
+            foreach (var i in res.items)
+            {
+                i.product.stock += i.quantity;
+            }
+            res.status = "canceld";
+            await db.SaveChangesAsync(); 
+            return true;
+        }
+
     }
 }
