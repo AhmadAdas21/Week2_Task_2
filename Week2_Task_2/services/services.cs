@@ -65,7 +65,7 @@ namespace Week2_Task_2.services
             var query = _data.prod.AsQueryable();
             if(search != null)
             {
-                query = query.Where(s => s.name == search);
+                query = query.Where(s => s.name.Contains(search));
             }
             if (minPrice != null)
             {

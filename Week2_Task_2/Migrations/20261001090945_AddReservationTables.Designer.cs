@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Week2_Task_2.Data;
 
@@ -11,9 +12,11 @@ using Week2_Task_2.Data;
 namespace Week2_Task_2.Migrations
 {
     [DbContext(typeof(data_base))]
-    partial class data_baseModelSnapshot : ModelSnapshot
+    [Migration("20261001090945_AddReservationTables")]
+    partial class AddReservationTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -65,7 +65,8 @@ namespace Week2_Task_2.Controllers
             var x = await db.Customers.FirstOrDefaultAsync(x => x.id == id);
             if (x == null)
             {
-                logger.LogWarning("the customer is not founded", id);
+                logger.LogWarning("the customer{id}not founded", id);
+
                 return NotFound();
                
 
