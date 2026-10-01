@@ -794,6 +794,25 @@ namespace Order_Mangment_System_Test
             var x=Assert.IsType<NotFoundObjectResult>(res.Result);
             Assert.Equal("Order not found", x.Value);
         }
+        [Fact]
+        public async Task get_order_and_the_order_not_found()
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            await connection.OpenAsync();
+
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
+
+            await using var db = new data_base(options);
+
+            await db.Database.EnsureCreatedAsync();
+            var service = new services(db);
+            var controller = new orderi(db, service);
+
+            var result = await controller.get_by_id(1000);
+
+            Assert.IsType<NotFoundResult>(result.Result);
+
+        }
     }
 }
     
