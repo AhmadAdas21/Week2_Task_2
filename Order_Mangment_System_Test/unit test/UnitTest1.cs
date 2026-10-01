@@ -718,6 +718,82 @@ namespace Order_Mangment_System_Test
             Assert.NotNull(res);
 
         }
+        [Fact]
+        public async Task update_order_status_when_completed()
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            await connection.OpenAsync();
+
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
+
+            await using var db = new data_base(options);
+
+            await db.Database.EnsureCreatedAsync();
+            var customer = new customer
+            {
+                id = 12,
+                name = "omar",
+                email = "Omar@gmail.com"
+            };
+
+            var product = new product
+            {
+                id = 20,
+                name = "banana",
+                description = "yummy banana",
+                stock = 500,
+                ksu = "BAN-20",
+                price = 5,
+                active = true
+            };
+
+            await db.Customers.AddAsync(customer);
+            await db.prod.AddAsync(product);
+            await db.SaveChangesAsync();
+
+            var service = new services(db);
+            var controller = new orderi(db, service);
+
+            var order = new add_order
+            {
+                customer_id = customer.id,
+                items = new List<add_order_item>
+                {
+                    new add_order_item
+                    {
+                        product_id = 20,
+                        quantity = 10
+                    }
+                }
+            };
+
+            var d = await controller.Create(order);
+            var created = await db.order.FirstOrDefaultAsync();
+            created.status = "complete";
+            await db.SaveChangesAsync();
+
+            var final = await controller.update(created.id, order);
+            var c = Assert.IsType<BadRequestObjectResult>(final.Result);
+            Assert.Equal("you cant modify a complete order", c.Value);
+                
+        }
+        [Fact]
+        public async Task delete_order_that_dosent_exist()
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            await connection.OpenAsync();
+
+            var options = new DbContextOptionsBuilder<data_base>().UseSqlite(connection).Options;
+
+            await using var db = new data_base(options);
+
+            await db.Database.EnsureCreatedAsync();
+            var service = new services(db);
+            var controller = new orderi(db, service);
+            var res = await controller.delete(100);
+            var x=Assert.IsType<NotFoundObjectResult>(res.Result);
+            Assert.Equal("Order not found", x.Value);
+        }
     }
 }
     
