@@ -19,11 +19,13 @@ namespace Week2_Task_2.Controllers
     {
         private readonly data_base db;
         private readonly iservices _service;
-        public customeri(data_base data, iservices service)
+        private readonly ILogger<customeri> logger;
+        public customeri(data_base data, iservices service, ILogger<customeri> logger)
         {
 
             db = data;
             _service = service;
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -54,6 +56,7 @@ namespace Week2_Task_2.Controllers
             };
 
             await _service.Create(customer);
+            logger.LogInformation("the customer created succefully", customer.id);
             return Ok(customer);
         }
         [HttpPut("{id}")]
@@ -64,6 +67,7 @@ namespace Week2_Task_2.Controllers
             {
 
                 return NotFound();
+                logger.LogWarning("the customer is not founded", id);
 
             }
             x.name = dto.name;
@@ -90,6 +94,7 @@ namespace Week2_Task_2.Controllers
             if (!s)
             {
                 return NotFound();
+                logger.LogWarning("the customer is not founded", id);
             }
 
             return NoContent();

@@ -16,11 +16,12 @@ namespace Week2_Task_2.Controllers
     {
         private readonly data_base _data;
         private readonly iservices s;
-
-        public producti(iservices service, data_base d)
+        private readonly ILogger<producti> logger;
+        public producti(iservices service, data_base d, ILogger<producti> logger)
         {
             _data = d;
             s = service;
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -84,6 +85,7 @@ namespace Week2_Task_2.Controllers
             };
             await _data.prod.AddAsync(x);
             await _data.SaveChangesAsync();
+            logger.LogInformation("product {id}created", x.id);
 
             return CreatedAtAction(nameof(get_by_id), new { id = x.id }, x);
         }
@@ -99,6 +101,7 @@ namespace Week2_Task_2.Controllers
             if (x == null)
             {
                 return BadRequest("the product is null");
+                logger.LogWarning("product {Id} not found",id);
             }
             x.name = d.name;
             x.price = d.price;
@@ -117,10 +120,12 @@ namespace Week2_Task_2.Controllers
             if (id < 0)
             {
                 return BadRequest("must be above 0");
+                
             }
             var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
             _data.prod.Remove(x);
             await _data.SaveChangesAsync();
+            logger.LogWarning("the product delteed succesfully", id);
             return NoContent();
         }
     }
