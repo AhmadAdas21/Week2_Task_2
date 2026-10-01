@@ -4,7 +4,7 @@ namespace Week2_Task_2.Dto.reservation
 {
     public class update_reservation
     {
-        [Required]
-        public int 
+   //   [Required]
+        
     }
 }

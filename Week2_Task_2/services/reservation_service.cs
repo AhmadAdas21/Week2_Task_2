@@ -75,7 +75,7 @@ namespace Week2_Task_2.services
             await db.SaveChangesAsync();
             return reservation;
         }
-        public async Task <reservartion> GetById(int id)
+        public async Task<reservartion> GetById(int id)
         {
             var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
             if (res == null)
@@ -92,7 +92,11 @@ namespace Week2_Task_2.services
         }
         public async Task<bool> Cancel(int id)
         {
-            var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
+            var res = await db.reservations
+                .Include(x => x.items)
+                .ThenInclude(x => x.product)
+                .FirstOrDefaultAsync(x => x.id == id);
+
             if (res == null)
             {
                 logger.LogWarning("the reservation id with id {id} dosent exist", id);
@@ -102,8 +106,8 @@ namespace Week2_Task_2.services
             {
                 i.product.stock += i.quantity;
             }
-            res.status = "canceld";
-            await db.SaveChangesAsync(); 
+            res.status = "Cancelled";
+            await db.SaveChangesAsync();
             return true;
         }
 
