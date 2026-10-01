@@ -100,8 +100,9 @@ namespace Week2_Task_2.Controllers
             var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
             if (x == null)
             {
+                logger.LogWarning("product {Id} not found", id);
                 return BadRequest("the product is null");
-                logger.LogWarning("product {Id} not found",id);
+                
             }
             x.name = d.name;
             x.price = d.price;

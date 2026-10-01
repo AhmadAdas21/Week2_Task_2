@@ -166,7 +166,7 @@ namespace Week2_Task_2.Controllers
             }
             if (x == null)
             {
-                logger.LogWarning("the order with id {id} not found", x.id);
+                logger.LogWarning("the order with id {id} not found",id);
                 return NotFound("order not found");
             }
             if (x.status == "complete")
@@ -197,7 +197,7 @@ namespace Week2_Task_2.Controllers
 
             if (x == null)
             {
-                logger.LogWarning("the order with id{id} not found", x.id);
+                logger.LogWarning("the order with id{id} not found", id);
                 return NotFound("Order not found");
             }
 

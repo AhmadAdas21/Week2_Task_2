@@ -65,9 +65,9 @@ namespace Week2_Task_2.Controllers
             var x = await db.Customers.FirstOrDefaultAsync(x => x.id == id);
             if (x == null)
             {
-
-                return NotFound();
                 logger.LogWarning("the customer is not founded", id);
+                return NotFound();
+               
 
             }
             x.name = dto.name;
@@ -93,8 +93,9 @@ namespace Week2_Task_2.Controllers
 
             if (!s)
             {
-                return NotFound();
                 logger.LogWarning("the customer is not founded", id);
+                return NotFound();
+               
             }
 
             return NoContent();
