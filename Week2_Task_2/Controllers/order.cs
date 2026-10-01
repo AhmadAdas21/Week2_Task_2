@@ -133,10 +133,18 @@ namespace Week2_Task_2.Controllers
             await dp.order.AddAsync(order);
             await dp.SaveChangesAsync();
             await tt.CommitAsync();
-        //  prod.stock-=d.quantity;
-            
+            //  prod.stock-=d.quantity;
 
-            return CreatedAtAction(nameof(get_by_id), new { id = order.id }, order);
+
+            return CreatedAtAction( nameof(get_by_id), new { id = order.id }, new
+     {
+         id = order.id,
+         customer_id = order.customer_id,
+         total = order.total,
+         status = order.status,
+         created_date = order.created_date
+     }
+ );
         }
         [HttpPut("{id}")]
         public async Task<ActionResult<List<response_order>>>update(int id,[FromBody]add_order dto)
