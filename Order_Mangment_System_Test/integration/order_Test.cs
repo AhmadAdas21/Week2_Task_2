@@ -16,6 +16,7 @@ using Week2_Task_2.Dto.orders;
 using Week2_Task_2.Dto.order_item;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Logging.Abstractions;
 
 
 namespace Order_Mangment_System_Test.integration

@@ -13,6 +13,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore.Sqlite;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging.Abstractions;
 //ing Week2_Task_2.
 namespace Order_Mangment_System_Test
 {
@@ -71,8 +72,8 @@ namespace Order_Mangment_System_Test
             };
 
             var service = new services(db);
-            
-            var controller = new orderi(db, service);
+
+            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
             var oo = await controller.Create(order);
             db.SaveChangesAsync();
             var bad =  Assert.IsType<BadRequestObjectResult>(oo.Result);
@@ -124,7 +125,7 @@ namespace Order_Mangment_System_Test
 
             var service = new services(db);
 
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
 
             var dto = new add_order
             {
@@ -180,7 +181,7 @@ namespace Order_Mangment_System_Test
 
             var service = new services(db);
 
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
             await db.Customers.AddAsync(customer);
             await db.prod.AddAsync(product);
 
@@ -242,7 +243,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new services(db);
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -316,7 +317,7 @@ namespace Order_Mangment_System_Test
                 
             };
             var service = new services(db);
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
             var kk = await controller.Create(o);
             var oo= Assert.IsType<BadRequestObjectResult>(kk.Result);
 
@@ -367,9 +368,9 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
             services s= new services(db);
             //var con=new Controller()
-            var c=new orderi(db, s);
+            var c = new orderi(db, s, NullLogger<orderi>.Instance);
             // await db.order.AddAsync(order);
-            
+
             var dd = await c.Create(order);
             var bad= Assert.IsType<BadRequestObjectResult>(dd.Result);
             Assert.Equal("the order must have at least one item", bad.Value);
@@ -407,7 +408,7 @@ namespace Order_Mangment_System_Test
 
             var service = new services(db);
 
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, s, NullLogger<orderi>.Instance);
             await db.Customers.AddAsync(customer);
             await db.prod.AddAsync(product);
 
@@ -467,7 +468,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new services(db);
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, s, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -524,7 +525,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new services(db);
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -583,7 +584,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new services(db);
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -639,9 +640,9 @@ namespace Order_Mangment_System_Test
     await db.SaveChangesAsync();
 
     var service = new services(db);
-    var controller = new orderi(db, service);
+    var controller = new orderi(db, service, NullLogger<orderi>.Instance);
 
-    var order = new add_order
+            var order = new add_order
     {
         customer_id = customer.id,
         items = new List<add_order_item>
@@ -695,7 +696,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new services(db);
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -752,7 +753,7 @@ namespace Order_Mangment_System_Test
             await db.SaveChangesAsync();
 
             var service = new services(db);
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
 
             var order = new add_order
             {
@@ -789,7 +790,7 @@ namespace Order_Mangment_System_Test
 
             await db.Database.EnsureCreatedAsync();
             var service = new services(db);
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
             var res = await controller.delete(100);
             var x=Assert.IsType<NotFoundObjectResult>(res.Result);
             Assert.Equal("Order not found", x.Value);
@@ -806,7 +807,7 @@ namespace Order_Mangment_System_Test
 
             await db.Database.EnsureCreatedAsync();
             var service = new services(db);
-            var controller = new orderi(db, service);
+            var controller = new orderi(db, service, NullLogger<orderi>.Instance);
 
             var result = await controller.get_by_id(1000);
 

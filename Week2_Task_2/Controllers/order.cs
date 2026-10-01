@@ -17,11 +17,13 @@ namespace Week2_Task_2.Controllers
     {
         private readonly data_base dp;
         private readonly iservices se;
+        private readonly ILogger<orderi> logger;
 
-        public orderi(data_base dp, iservices se)
+        public orderi(data_base dp, iservices se, ILogger<orderi> logger)
         {
             this.dp = dp;
             this.se = se;
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -46,7 +48,8 @@ namespace Week2_Task_2.Controllers
         [HttpPost]
         public async Task<ActionResult<response_order>> Create([FromBody] add_order dto)
         {
-           
+            logger.LogInformation("creating order for customer customerid", dto.customer_id);
+
             await using var tt = await dp.Database.BeginTransactionAsync();
          // await using var tt=await dp.Database.BeginTransactionAsync();
             float total = 0;
@@ -58,6 +61,7 @@ namespace Week2_Task_2.Controllers
             if (dto.customer_id < 0 || await dp.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id) == null)
             {
                 return BadRequest("the customer id is invalid or the customer does not exist");
+                logger.LogWarning("order creation failed,,customer customerid was not found", dto.customer_id);
             }
             
 
@@ -82,6 +86,7 @@ namespace Week2_Task_2.Controllers
                 if (p == null)
                 {
                     return BadRequest( "product  does not exist" );
+                    logger.LogWarning("order creation failed. product productid was not found", o.product_id);
                 }
                 if(p.active == false)
                 {
@@ -134,6 +139,8 @@ namespace Week2_Task_2.Controllers
             await dp.SaveChangesAsync();
             await tt.CommitAsync();
             //  prod.stock-=d.quantity;
+           
+            logger.LogInformation("order orderid created successfully for customer customerid", order.id, order.customer_id);
 
 
             return CreatedAtAction( nameof(get_by_id), new { id = order.id }, new
@@ -198,6 +205,7 @@ namespace Week2_Task_2.Controllers
 
             dp.order.Remove(x);
             await dp.SaveChangesAsync();
+            logger.LogInformation( "order orderId deleted successfully", id);
 
             return NoContent();
         }

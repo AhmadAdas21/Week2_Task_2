@@ -1,32 +1,41 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using System.Text.Json;
 
-namespace Week2_Task_2
+public class GlobalExceptionHandler : IExceptionHandler
 {
-    public class GlobalExceptionHandler : IExceptionHandler
+    private readonly ILogger<GlobalExceptionHandler> logger;
+
+    public GlobalExceptionHandler(
+        ILogger<GlobalExceptionHandler> logger)
     {
-        public async ValueTask<bool> TryHandleAsync(
-    HttpContext context,
-    Exception exception,
-    CancellationToken cancellationToken)
+        this.logger = logger;
+    }
+
+    public async ValueTask<bool> TryHandleAsync(
+        HttpContext context,
+        Exception exception,
+        CancellationToken cancellationToken)
+    {
+        logger.LogError(
+            exception,
+            "An unexpected error occurred while processing the request"
+        );
+
+        context.Response.StatusCode =
+            StatusCodes.Status500InternalServerError;
+
+        context.Response.ContentType = "application/json";
+
+        var response = new
         {
-            context.Response.StatusCode =
-                StatusCodes.Status500InternalServerError;
+            statusCode = 500,
+            message = "An unexpected error occurred"
+        };
 
-            context.Response.ContentType = "application/json";
+        await context.Response.WriteAsJsonAsync(
+            response,
+            cancellationToken
+        );
 
-            var response = new
-            {
-                StatusCode = 500,
-                Message = exception.Message,
-                InnerException = exception.InnerException?.Message
-            };
-
-            await context.Response.WriteAsync(
-                JsonSerializer.Serialize(response),
-                cancellationToken);
-
-            return true;
-        }
+        return true;
     }
 }
