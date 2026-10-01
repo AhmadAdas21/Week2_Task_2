@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Week2_Task_2.Data;
 using Week2_Task_2.Dto.reservation;
 using Week2_Task_2.models;
 
@@ -10,11 +12,13 @@ namespace Week2_Task_2.Controllers
     {
         private readonly iservices_reservation service;
         private readonly ILogger<reservation> logger;
+        private readonly data_base db;
 
-        public reservation(iservices_reservation service, ILogger<reservation> logger)
+        public reservation(iservices_reservation service, ILogger<reservation> logger, data_base db)
         {
             this.service = service;
             this.logger = logger;
+            this.db = db;
         }
 
         [HttpPost]
@@ -46,6 +50,40 @@ namespace Week2_Task_2.Controllers
             }
 
             return Ok(reservation);
+        }
+        [HttpGet]
+        public async Task<ActionResult> Get()
+        {
+            if (db.reservations.Count() == 0)
+            {
+                logger.LogWarning("theres no reservations yet");
+                return NotFound();
+            }
+            return Ok(db.reservations);
+        }
+        [HttpPut("{id}")]
+        public async Task<ActionResult> update(int id, [FromBody]
+        {
+            var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
+            if (res == null)
+            {
+                logger.LogWarning("the id {id}is not valid", id);
+                return NotFound();
+            }
+            
+        }
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> Cancel(int id)
+        {
+            var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
+            if (res == null)
+            {
+                logger.LogWarning("the id{id} is not va id", id);
+                return NotFound();
+            }
+            await service.Cancel(id);
+
+            return NoContent();
         }
     }
 }
