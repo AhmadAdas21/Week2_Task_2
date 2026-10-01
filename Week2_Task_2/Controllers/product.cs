@@ -51,13 +51,13 @@ namespace Week2_Task_2.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<response_prod>> get_by_id(int d)
+        public async Task<ActionResult<response_prod>> get_by_id(int id)
         {
-            if (d < 0)
+            if (id < 0)
             {
                 return BadRequest("the Is must be greater than 0or zero");
             }
-            var x = await _data.prod.FirstOrDefaultAsync(x => x.id == d);
+            var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
 
             if (x == null)
             {
@@ -122,10 +122,18 @@ namespace Week2_Task_2.Controllers
                 return BadRequest("must be above 0");
                 
             }
+          //var uu = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
+
             var x = await _data.prod.FirstOrDefaultAsync(x => x.id == id);
+            if(x == null)
+            {
+                logger.LogWarning(" the product is not found {id}", id);
+                return BadRequest("the product is not found");
+                
+            }
             _data.prod.Remove(x);
             await _data.SaveChangesAsync();
-            logger.LogWarning("the product delteed succesfully", id);
+            logger.LogInformation("the product delteed succesfully{id}", id);
             return NoContent();
         }
     }
