@@ -10,7 +10,7 @@ namespace Week2_Task_2.Dto.reservation
 
    //  public int prod_id { get; set; }
         [Required]
-        public List<reservation_item> items { get; set; }
+        public List<models.reservation_item> items { get; set; }
 
         [Required]
         public int customer_id { get; set; }
