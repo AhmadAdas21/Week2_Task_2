@@ -60,8 +60,9 @@ namespace Week2_Task_2.Controllers
 
             if (dto.customer_id < 0 || await dp.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id) == null)
             {
+                logger.LogWarning("order creation failed,,customer customerid{id} not found", dto.customer_id);
                 return BadRequest("the customer id is invalid or the customer does not exist");
-                logger.LogWarning("order creation failed,,customer customerid was not found", dto.customer_id);
+                
             }
             
 
@@ -76,6 +77,7 @@ namespace Week2_Task_2.Controllers
             };
             if (dto.items == null || dto.items.Count == 0)
             {
+               
                 return BadRequest( "the order must have at least one item" );
             }
             foreach (var o in dto.items)
@@ -85,8 +87,9 @@ namespace Week2_Task_2.Controllers
 
                 if (p == null)
                 {
+                    logger.LogWarning("order creation failed. product productid{id} not found", o.product_id);
                     return BadRequest( "product  does not exist" );
-                    logger.LogWarning("order creation failed. product productid was not found", o.product_id);
+                   
                 }
                 if(p.active == false)
                 {
@@ -140,7 +143,7 @@ namespace Week2_Task_2.Controllers
             await tt.CommitAsync();
             //  prod.stock-=d.quantity;
            
-            logger.LogInformation("order orderid created successfully for customer customerid", order.id, order.customer_id);
+            logger.LogInformation("order orderid created successfully for customer custom{id}",  order.customer_id);
 
 
             return CreatedAtAction( nameof(get_by_id), new { id = order.id }, new
@@ -163,6 +166,7 @@ namespace Week2_Task_2.Controllers
             }
             if (x == null)
             {
+                logger.LogWarning("the order with id {id} not found", x.id);
                 return NotFound("order not found");
             }
             if (x.status == "complete")
@@ -193,6 +197,7 @@ namespace Week2_Task_2.Controllers
 
             if (x == null)
             {
+                logger.LogWarning("the order with id{id} not found", x.id);
                 return NotFound("Order not found");
             }
 
@@ -205,7 +210,7 @@ namespace Week2_Task_2.Controllers
 
             dp.order.Remove(x);
             await dp.SaveChangesAsync();
-            logger.LogInformation( "order orderId deleted successfully", id);
+            logger.LogInformation( "order {id}id deleted successfully", id);
 
             return NoContent();
         }
