@@ -119,6 +119,70 @@ namespace Order_Mangment_System_Test.integration
             Assert.Equal(HttpStatusCode.BadRequest, final.StatusCode);
 
         }
+        [Fact]
+        public async Task get_All_orders_after_creation()
+        {
+            using var factory = new CustomWebApplicationFactory();
+            var client = factory.CreateClient();
+
+            var customer = new customer
+            {
+                name = "Ahmad",
+                email = "ahmad@gmail.com"
+            };
+
+            var product = new product
+            {
+                name = "Mouse",
+                description = "Wireless mouse for daily office usage",
+                price = 20,
+                stock = 100,
+                ksu = "MO-100",
+                active = true
+            };
+            using var scope = factory.Services.CreateScope();
+
+            var db = scope.ServiceProvider.GetRequiredService<data_base>();
+            await db.Customers.AddAsync(customer);
+            await db.prod.AddAsync(product);
+            await db.SaveChangesAsync();
+
+
+
+
+
+
+
+            var order = new add_order
+            {
+                customer_id = customer.id,
+
+                items = new List<add_order_item>
+                { 
+       
+            new add_order_item
+            {
+                product_id = product.id,
+                quantity = 2
+            }
+        }
+            };
+            var createResponse =await client.PostAsJsonAsync("/api/orders", order);
+
+            Assert.Equal( HttpStatusCode.Created,createResponse.StatusCode);
+
+            var getResponse = await client.GetAsync("/api/orders");
+
+            Assert.Equal(HttpStatusCode.OK,getResponse.StatusCode );
+
+
+
+
+
+
+
+
+        }
 
 
 
