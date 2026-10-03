@@ -9,5 +9,7 @@ namespace Week2_Task_2
         Task<reservartion> Create(add_reservation dto);
         Task<reservartion?> GetById(int id);
         Task<bool> Cancel(int id);
+        Task<int> ExpireReservations();
+        Task<order?> ConvertToOrder(int id);
     }
 }

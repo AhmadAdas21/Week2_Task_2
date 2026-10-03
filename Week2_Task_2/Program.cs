@@ -14,6 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<iservices, services>();
 builder.Services.AddScoped<iservices_reservation, reservation_service>();
+builder.Services.AddHostedService<reservation_expiration_service>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 

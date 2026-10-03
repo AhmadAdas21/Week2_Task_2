@@ -110,6 +110,113 @@ namespace Week2_Task_2.services
             await db.SaveChangesAsync();
             return true;
         }
+        public async Task<int> ExpireReservations()
+        {
+            var reservations = await db.reservations.Include(x => x.items).ThenInclude(x => x.product).Where(x =>
+                    x.status == "Active" &&x.expires_at <= DateTime.Now).ToListAsync();
+
+            foreach (var res in reservations)
+            {
+                foreach (var i in res.items)
+                {
+                    i.product.stock += i.quantity;
+                }
+
+                res.status = "expired";
+
+                logger.LogInformation("reservation {id} expired and stock returned", res.id);
+            }
+
+            await db.SaveChangesAsync();
+
+            return reservations.Count;
+        }
+        public async Task<order?> ConvertToOrder(int id)
+        {
+            await using var transaction =
+                await db.Database.BeginTransactionAsync();
+
+            var res = await db.reservations
+                .Include(x => x.customer).Include(x => x.items).ThenInclude(x => x.product)
+                .FirstOrDefaultAsync(x => x.id == id);
+
+            if (res == null)
+            {
+                logger.LogWarning( "reservation {id} does not exist",id );
+
+                return null;
+            }
+
+            if (res.status == "Converted")
+            {
+                throw new InvalidOperationException("reservation already converted");
+            }
+
+            if (res.status == "Cancelled")
+            {
+                throw new InvalidOperationException("cancelled reservation cannot be converted");
+            }
+
+            if (res.status == "Expired")
+            {
+                throw new InvalidOperationException("expired reservation cannot be converted");
+            }
+
+            if (res.expires_at <= DateTime.Now)
+            {
+                foreach (var i in res.items)
+                {
+                    i.product.stock += i.quantity;
+                }
+
+                res.status = "Expired";
+
+                await db.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                throw new InvalidOperationException("reservation has expired");
+            }
+
+            var order = new order
+            {
+                customer_id = res.customer_id,
+                customer = res.customer,
+                status = "Pending",
+                created_date = DateTime.Now,
+                order_items = new List<order_item>()
+            };
+
+            float total = 0;
+
+            foreach (var i in res.items)
+            {
+                var item = new order_item
+                {
+                    product_id = i.product_id,
+                    product = i.product,
+                    quantity = i.quantity,
+                    price = i.product.price
+                };
+
+                total += i.product.price * i.quantity;
+
+                order.order_items.Add(item);
+            }
+
+            order.total = total;
+
+            res.status = "Converted";
+
+            await db.order.AddAsync(order);
+            await db.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            logger.LogInformation("reservation {reservationId} converted to order {orderId}",res.id,order.id);
+
+            return order;
+        }
+
 
     }
 }

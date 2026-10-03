@@ -75,8 +75,8 @@ namespace Week2_Task_2.Controllers
             }
             res.customer_id = dto.customer_id;
             res.customer = await db.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id);
-            res.expires_at = DateTime.Now.AddDays(2);
-            
+            res.expires_at = DateTime.Now.AddMinutes(15);
+
             return Ok(res);
 
 
@@ -87,12 +87,41 @@ namespace Week2_Task_2.Controllers
             var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
             if (res == null)
             {
-                logger.LogWarning("the id{id} is not va id", id);
+                logger.LogWarning("the id{id} is not valid", id);
                 return NotFound();
+            }
+            if (res.status != "Active")
+            {
+                logger.LogWarning("reservation {id} cannot be cancelled because status is {status}", id, res.status);
+
+                return BadRequest("Reservation cannot be cancelled due to its current status." );
             }
             await service.Cancel(id);
 
             return NoContent();
+        }
+        [HttpPost("{id}/convert")]
+        public async Task<ActionResult> convert_order(int id)
+        {
+            var order = await service.ConvertToOrder(id);
+
+            if (order == null)
+            {
+                logger.LogWarning("reservation {id} not found", id );
+
+                return NotFound();
+            }
+
+            return CreatedAtAction(nameof(orderi.get_by_id), "orderi",new { id = order.id },
+                new
+                {
+                    id = order.id,
+                    customer_id = order.customer_id,
+                    total = order.total,
+                    status = order.status,
+                    created_date = order.created_date
+                }
+            );
         }
     }
 }
