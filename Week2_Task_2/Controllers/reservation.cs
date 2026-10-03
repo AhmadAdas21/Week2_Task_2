@@ -65,7 +65,7 @@ namespace Week2_Task_2.Controllers
             return Ok(db.reservations);
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult> update(int id, [FromBody]
+        public async Task<ActionResult> update(int id, [FromBody] add_reservation dto)
         {
             var res = await db.reservations.FirstOrDefaultAsync(x => x.id == id);
             if (res == null)
@@ -73,7 +73,13 @@ namespace Week2_Task_2.Controllers
                 logger.LogWarning("the id {id}is not valid", id);
                 return NotFound();
             }
+            res.customer_id = dto.customer_id;
+            res.customer = await db.Customers.FirstOrDefaultAsync(x => x.id == dto.customer_id);
+            res.expires_at = DateTime.Now.AddDays(2);
             
+            return Ok(res);
+
+
         }
         [HttpPut("{id}/cancel")]
         public async Task<IActionResult> Cancel(int id)
